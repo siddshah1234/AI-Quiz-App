@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizLinker</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5faff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Heading styling */
+        h1 {
+            margin-bottom: 30px;
+            font-size: 38px;
+            color: #7F00FF;
+        }
+
+        /* Form and textarea styling */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        textarea {
+            padding: 20px;
+            font-size: 16px;
+            border: 2px solid #d1e0ff;
+            border-radius: 8px;
+            width: 100%;
+            height: 120px;
+            box-sizing: border-box;
+            resize: none;
+        }
+
+        /* Highlight textarea border on focus */
+        textarea:focus {
+            border-color: #7F00FF;
+            outline: none;
+        }
+
+        /* Button styling */
+        button {
+            padding: 15px;
+            font-size: 18px;
+            background-color: #7F00FF;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Change button color on hover */
+        button:hover {
+            background-color: #5D3FD3;
+        }
+
+        /* Dropdown styling */
+        select {
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #d1e0ff;
+            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        select:focus {
+            border-color: #7F00FF;
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>QuizLinker</h1>
+        <form method="POST">
+            <label for="youtube_url">Enter YouTube Video URL:</label>
+            <textarea id="youtube_url" name="youtube_url" required></textarea>
+
+            <!-- Dropdown for number of questions -->
+            <label for="num_questions">Number of Questions:</label>
+            <select id="num_questions" name="num_questions" required>
+                <option value="5">5 Questions</option>
+                <option value="6">6 Questions</option>
+                <option value="7">7 Questions</option>
+                <option value="8">8 Questions</option>
+                <option value="9">9 Questions</option>
+                <option value="10">10 Questions</option>
+            </select>
+
+            <button type="submit">Generate Quiz</button>
+        </form>
+        <div id="quiz"></div>
+    </div>
+
+    <script>
+        const form = document.querySelector('form');
+        const quizDiv = document.getElementById('quiz');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(form);
+            const youtubeUrl = formData.get('youtube_url');
+            const numQuestions = formData.get('num_questions');
+
+            const response = await fetch("/", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await response.json();
+            if (data.quiz) {
+                quizDiv.innerHTML = `<h2>Quiz:</h2><p>${data.quiz.replace(/\n/g, "<br>")}</p>`;
+            } else {
+                quizDiv.innerHTML = `<p>Error: ${data.error}</p>`;
+            }
+        });
+    </script>
+</body>
+
+</html>
